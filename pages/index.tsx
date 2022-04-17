@@ -112,7 +112,9 @@ const Home: NextPage = () => {
       : schedules.slice(1).reduce(reducer, 0)
     : 0;
 
-  const { hour: avgHour, min: avgMin } = parseTimeMS(workTime / workDays);
+  const { hour: avgHour, min: avgMin } = parseTimeMS(
+    workDays > 0 ? workTime / workDays : 0
+  );
 
   return dataLoaded && user ? (
     <Layout>
