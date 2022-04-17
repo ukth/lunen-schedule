@@ -188,7 +188,7 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className="flex border-b h-7 mb-1">
-            <div className="flex-1">날짜</div>
+            <div className="flex-[1.2]">날짜</div>
             <div className="flex-1">출근</div>
             <div className="flex-1">퇴근</div>
             <div className="flex-1">근무시간</div>
@@ -216,9 +216,9 @@ const Home: NextPage = () => {
               return (
                 <div
                   key={i}
-                  className="flex border-b-[1px] last:border-0 text-lg"
+                  className="flex border-b-[1px] last:border-0 text-sm md:text-lg"
                 >
-                  <div className="flex-1">{`${year}/${month}/${date} (${KOREAN_DAY[day]})`}</div>
+                  <div className="flex-[1.2]">{`${year}/${month}/${date} (${KOREAN_DAY[day]})`}</div>
                   <div className="flex-1">
                     {schedule.startedAt
                       .toLocaleTimeString("en", {
