@@ -140,7 +140,7 @@ const Home: NextPage = () => {
     <Layout>
       <NavBar user={user} />
       <div className="h-1/3 w-full flex items-end justify-center">
-        <div className="text-6xl font-semibold">
+        <div className="text-2xl md:text-6xl font-semibold">
           {workingStatus.isWorking
             ? workedHour + "h " + workedMin + "m " + workedSec + "s"
             : displayTime.toLocaleString("ko-KR")}
