@@ -72,7 +72,6 @@ const Home: NextPage = () => {
       const data: { schedules?: schedule[] } = await getData(
         "/api/schedule/getSchedules"
       );
-      console.log("data:", data);
       if (data?.schedules) {
         if (data.schedules.length === 0 || data.schedules[0].finishedAt) {
           setWorkingStatus({
@@ -101,9 +100,11 @@ const Home: NextPage = () => {
   const reducer = (prev: number, current: schedule) =>
     prev + (current.finishedAt?.valueOf() ?? 0) - current.startedAt.valueOf();
 
-  const workDays = schedules[0]?.finishedAt
-    ? schedules.length
-    : schedules.length - 1;
+  const workDays = schedules[0]
+    ? schedules[0]?.finishedAt
+      ? schedules.length
+      : schedules.length - 1
+    : 0;
 
   const workTime = schedules[0]
     ? schedules[0].finishedAt
@@ -112,10 +113,6 @@ const Home: NextPage = () => {
     : 0;
 
   const { hour: avgHour, min: avgMin } = parseTimeMS(workTime / workDays);
-
-  console.log(typeof schedules[0]?.startedAt);
-
-  console.log(schedules[0]?.startedAt.valueOf());
 
   return dataLoaded && user ? (
     <Layout>
