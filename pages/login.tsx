@@ -26,6 +26,7 @@ const Login: NextPage = () => {
   useEffect(() => {
     if (data?.error) {
       console.log(data.error);
+      alert(data.error);
     }
     if (data?.ok) {
       router.push("/");
