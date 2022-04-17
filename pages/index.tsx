@@ -178,7 +178,7 @@ const Home: NextPage = () => {
         )}
       </div>
       <div className="w-full">
-        <div className="mx-auto w-2/3">
+        <div className="w-full px-2 md:w-2/3 md:mx-auto">
           <div className="flex justify-end space-x-2 font-medium mb-4">
             <div>근무일수 {workDays}일</div>
             <div>|</div>
