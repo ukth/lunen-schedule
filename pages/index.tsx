@@ -23,12 +23,15 @@ const Home: NextPage = () => {
     useMutation<ResponseType>("/api/schedule/depart");
 
   const [workingStatus, setWorkingStatus] = useState<{
+    started: number;
     isWorking: boolean;
     scheduleId: number;
   }>();
   const [isOffice, setIsOffice] = useState<boolean>();
 
   const [displayTime, setDisplaytime] = useState(new Date());
+
+  const [timeWorked, setTimeWorked] = useState(0);
 
   const [dataLoaded, setDataLoaded] = useState(false);
   // schedule => isworking
@@ -40,6 +43,15 @@ const Home: NextPage = () => {
     }, 100);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (workingStatus?.isWorking) {
+        setTimeWorked(new Date().valueOf() - workingStatus.started);
+      }
+    }, 100);
+    return () => clearInterval(id);
+  }, [workingStatus]);
 
   useEffect(() => {
     // need to fix!!
@@ -75,11 +87,13 @@ const Home: NextPage = () => {
       if (data?.schedules) {
         if (data.schedules.length === 0 || data.schedules[0].finishedAt) {
           setWorkingStatus({
+            started: 0,
             isWorking: false,
             scheduleId: 0,
           });
         } else {
           setWorkingStatus({
+            started: data.schedules[0].startedAt.valueOf(),
             isWorking: true,
             scheduleId: data.schedules[0].id,
           });
@@ -116,12 +130,20 @@ const Home: NextPage = () => {
     workDays > 0 ? workTime / workDays : 0
   );
 
-  return dataLoaded && user ? (
+  const {
+    hour: workedHour,
+    min: workedMin,
+    sec: workedSec,
+  } = parseTimeMS(timeWorked);
+
+  return workingStatus && dataLoaded && user ? (
     <Layout>
       <NavBar user={user} />
       <div className="h-1/3 w-full flex items-end justify-center">
         <div className="text-6xl font-semibold">
-          {displayTime.toLocaleString("ko-KR")}
+          {workingStatus.isWorking
+            ? workedHour + "h " + workedMin + "m " + workedSec + "s"
+            : displayTime.toLocaleString("ko-KR")}
         </div>
       </div>
       <div className="h-1/6 w-full flex items-end justify-center mb-10">
