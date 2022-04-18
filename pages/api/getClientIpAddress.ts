@@ -12,10 +12,23 @@ async function handler(
     // console.log(req.socket);
     // console.log(ipAddress);
 
+    // console.log("req.headers", req.headers);
+    // console.log('req.headers["x-real-ip"]', req.headers["x-real-ip"]);
+    // console.log(
+    //   'req.headers["x-forwarded-for"]',
+    //   req.headers["x-forwarded-for"]
+    // );
+    // //@ts-ignore
+    // console.log("req", req);
+    // console.log("req.connection?.remoteAddress", req.connection?.remoteAddress);
+
     res.json({
       ok: true,
       ipAddress,
-      req,
+      req: {
+        headers: req.headers,
+        connection: req.connection,
+      },
     });
   }
 }
