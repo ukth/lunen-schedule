@@ -26,9 +26,9 @@ async function handler(
 
     res.json({
       ok: true,
-      ipAddress,
+      // ipAddress,
 
-      "req.headers": req.headers,
+      // "req.headers": req.headers,
       'req.headers["x-real-ip"]': req.headers["x-real-ip"],
       'req.headers["x-forwarded-for"]': req.headers["x-forwarded-for"],
       "req.connection?.remoteAddress": req.connection?.remoteAddress,
