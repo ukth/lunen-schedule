@@ -45,7 +45,7 @@ const Login: NextPage = () => {
   };
 
   return (
-    <Layout title="로그인" whiteBackground>
+    <Layout title="Login" whiteBackground>
       <div className="pt-40 text-center">
         <div className="py-4 px-16 inline-block bg-white w-fit">
           <div className="relative h-52 w-40 mb-4 mx-auto">

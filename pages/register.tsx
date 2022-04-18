@@ -35,7 +35,7 @@ const Register: NextPage = () => {
   };
 
   return (
-    <Layout title="회원 등록" whiteBackground>
+    <Layout title="Register" whiteBackground>
       <div className="pt-40 text-center">
         <div className="py-4 px-16 inline-block bg-white w-fit">
           <div className="relative h-52 w-40 mb-4 mx-auto">

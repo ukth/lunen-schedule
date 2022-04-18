@@ -59,7 +59,7 @@ const SchedulePage: NextPage = () => {
   }, [router]);
 
   return (
-    <Layout>
+    <Layout title="Schedule">
       {user ? <NavBar user={user} /> : null}
       {profile && schedules ? (
         <>

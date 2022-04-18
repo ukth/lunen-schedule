@@ -138,7 +138,7 @@ const Home: NextPage = () => {
   } = parseTimeMS(timeWorked);
 
   return (
-    <Layout>
+    <Layout title="Main">
       {user ? <NavBar user={user} /> : null}
       {ipAddress && workingStatus && dataLoaded && user ? (
         <>

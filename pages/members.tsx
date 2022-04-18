@@ -37,7 +37,7 @@ const Login: NextPage = () => {
   }, []);
 
   return (
-    <Layout title="Members" whiteBackground>
+    <Layout title="Members">
       {user ? <NavBar user={user} /> : null}
       {members.length ? (
         <div className="w-2/3 mx-auto pt-80">
