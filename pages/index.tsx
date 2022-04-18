@@ -79,8 +79,8 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     (async () => {
-      const ip = await getData("/api/getClientIpAddress");
-      // console.log(ip);
+      const res = await getData("/api/getClientIpAddress");
+      console.log(res);
       const data: { schedules?: schedule[] } = await getData(
         "/api/schedule/getSchedules"
       );
