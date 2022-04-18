@@ -189,7 +189,7 @@ const Home: NextPage = () => {
             </button>
           )
         ) : (
-          <div className="flex justify-center items-center w-20 h-8 text-lg">
+          <div className="flex justify-center items-center h-8 md:text-lg">
             사무실 인터넷에 연결되어있지 않습니다.
           </div>
         )}
