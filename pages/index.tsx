@@ -155,7 +155,7 @@ const Home: NextPage = () => {
           {workingStatus.isWorking
             ? timeWorked > 0
               ? (workedHour > 0 ? workedHour + "h " : "") +
-                (workedMin > 0 ? workedMin + "m " : "") +
+                (workedHour > 0 || workedMin > 0 ? workedMin + "m " : "") +
                 workedSec +
                 "s"
               : null
