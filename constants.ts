@@ -1,4 +1,4 @@
-export const OFFICE_IPS = [
+export const OFFICE_IP_ADDRESSES = [
   "221.149.114.252",
   "218.153.187.125",
   "218.153.187.124",

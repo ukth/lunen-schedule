@@ -1,6 +1,12 @@
 import Layout from "@components/Layout";
 import NavBar from "@components/NavBar";
-import { KOREAN_DAY, ScheduleType, TYPE_OFFICE } from "@constants";
+import {
+  KOREAN_DAY,
+  OFFICE_IPS,
+  OFFICE_IP_ADDRESSES,
+  ScheduleType,
+  TYPE_OFFICE,
+} from "@constants";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
 import { parseTimeMS } from "@libs/client/util";
@@ -34,6 +40,8 @@ const Home: NextPage = () => {
   const [timeWorked, setTimeWorked] = useState(0);
 
   const [dataLoaded, setDataLoaded] = useState(false);
+
+  const [ipAddress, setIpAddress] = useState<string>();
   // schedule => isworking
   // ip => is Office
 
@@ -79,8 +87,12 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     (async () => {
-      const res = await getData("/api/getClientIpAddress");
-      console.log(res);
+      const { ok, ipAddress: clientIp } = await getData(
+        "/api/getClientIpAddress"
+      );
+      if (ok) {
+        setIpAddress(clientIp);
+      }
       const data: { schedules?: schedule[] } = await getData(
         "/api/schedule/getSchedules"
       );
@@ -136,7 +148,7 @@ const Home: NextPage = () => {
     sec: workedSec,
   } = parseTimeMS(timeWorked);
 
-  return workingStatus && dataLoaded && user ? (
+  return ipAddress && workingStatus && dataLoaded && user ? (
     <Layout>
       <NavBar user={user} />
       <div className="h-1/3 w-full flex items-end justify-center">
@@ -147,34 +159,40 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="h-1/6 w-full flex items-end justify-center mb-10">
-        {!workingStatus?.isWorking ? (
-          <button
-            className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
+        {OFFICE_IP_ADDRESSES.includes(ipAddress) ? (
+          !workingStatus?.isWorking ? (
+            <button
+              className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
             text-lg text-white
             hover:ring-2 ring-offset-1 ring-blue-400"
-            onClick={async () => {
-              arrive({
-                type: TYPE_OFFICE,
-                userId: user.id,
-              });
-            }}
-          >
-            출근
-          </button>
+              onClick={async () => {
+                arrive({
+                  type: TYPE_OFFICE,
+                  userId: user.id,
+                });
+              }}
+            >
+              출근
+            </button>
+          ) : (
+            <button
+              className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
+            text-lg text-white
+            hover:ring-2 ring-offset-1 ring-blue-400"
+              onClick={() => {
+                depart({
+                  type: TYPE_OFFICE,
+                  scheduleId: workingStatus.scheduleId,
+                });
+              }}
+            >
+              퇴근
+            </button>
+          )
         ) : (
-          <button
-            className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
-            text-lg text-white
-            hover:ring-2 ring-offset-1 ring-blue-400"
-            onClick={() => {
-              depart({
-                type: TYPE_OFFICE,
-                scheduleId: workingStatus.scheduleId,
-              });
-            }}
-          >
-            퇴근
-          </button>
+          <div className="flex justify-center items-center w-20 h-8 text-lg">
+            사무실 인터넷에 연결되어있지 않습니다.
+          </div>
         )}
       </div>
       <div className="w-full">

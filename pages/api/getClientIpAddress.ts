@@ -8,28 +8,12 @@ async function handler(
   res: NextApiResponse<ResponseType>
 ) {
   if (req.method === "GET") {
-    const ipAddress = req.socket.remoteAddress;
-    // console.log(req.socket);
-    // console.log(ipAddress);
-
-    // console.log("req.headers", req.headers);
-    // console.log('req.headers["x-real-ip"]', req.headers["x-real-ip"]);
-    // console.log(
-    //   'req.headers["x-forwarded-for"]',
-    //   req.headers["x-forwarded-for"]
-    // );
-    // //@ts-ignore
-    // console.log("req", req);
-    // console.log("req.connection?.remoteAddress", req.connection?.remoteAddress);
+    const ipAddress =
+      req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
 
     res.json({
       ok: true,
-      // ipAddress,
-
-      // "req.headers": req.headers,
-      'realip"': req.headers["x-real-ip"],
-      'req.headers["x-forwarded-for"]': req.headers["x-forwarded-for"],
-      conn: req.connection?.remoteAddress,
+      ipAddress,
     });
   }
 }
