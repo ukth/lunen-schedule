@@ -29,6 +29,7 @@ async function handler(
       // "req.headers": req.headers,
       'realip"': req.headers["x-real-ip"],
       'req.headers["x-forwarded-for"]': req.headers["x-forwarded-for"],
+      conn: req.connection?.remoteAddress,
     });
   }
 }
