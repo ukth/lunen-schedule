@@ -2,7 +2,6 @@ import Layout from "@components/Layout";
 import NavBar from "@components/NavBar";
 import {
   KOREAN_DAY,
-  OFFICE_IPS,
   OFFICE_IP_ADDRESSES,
   ScheduleType,
   TYPE_OFFICE,
