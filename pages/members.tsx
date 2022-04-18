@@ -40,10 +40,14 @@ const Login: NextPage = () => {
     <Layout title="Members">
       {user ? <NavBar user={user} /> : null}
       {members.length ? (
-        <div className="w-2/3 mx-auto pt-80">
+        <div className="w-2/3 mx-auto pt-52">
           {members.map((member, i) => (
             <Link key={i} href={`/schedule/${member.id}`}>
-              <a className="w-40 h-10 flex items-center border-b-[1px] last:border-0 text-lg hover:underline ">
+              <a
+                className="p-5 w-48 flex items-center border-b-[1px] last:border-0 text-lg
+              bg-white rounded-md shadow-sm mb-3
+              hover:bg-gray-50 active:scale-[0.98]"
+              >
                 {member.name}
               </a>
             </Link>
