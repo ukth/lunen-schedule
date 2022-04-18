@@ -19,7 +19,7 @@ async function handler(
       req.headers["x-forwarded-for"]
     );
     //@ts-ignore
-    console.log("req.ip", req.ip ?? "no ip");
+    console.log("req", req);
     console.log("req.connection?.remoteAddress", req.connection?.remoteAddress);
 
     res.json({
