@@ -21,7 +21,12 @@ const NavBar = ({ user }: NavbarProps) => {
   return (
     <div className="fixed top-0 flex justify-between w-full p-4 h-16 items-center bg-white z-10 ">
       <div className="flex items-center space-x-4">
-        <div className="relative h-12 w-10 mb-4 my-auto mt-5">
+        <div
+          onClick={() => {
+            router.push("/");
+          }}
+          className="relative h-12 w-10 mb-4 my-auto mt-5 hover:cursor-pointer"
+        >
           <Image
             alt="prof"
             src={"/super.png"}
@@ -29,7 +34,14 @@ const NavBar = ({ user }: NavbarProps) => {
             objectFit="cover"
           />
         </div>
-        <div className="text-2xl font-medium text-gray-800">Lunen</div>
+        <div
+          onClick={() => {
+            router.push("/members");
+          }}
+          className="text-2xl font-medium text-gray-800  hover:cursor-pointer"
+        >
+          Lunen
+        </div>
       </div>
       <div className="flex items-center space-x-4">
         <div>안녕하세요, {user.name}님!</div>

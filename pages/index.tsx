@@ -1,11 +1,8 @@
 import Layout from "@components/Layout";
+import Loading from "@components/Loading";
 import NavBar from "@components/NavBar";
-import {
-  KOREAN_DAY,
-  OFFICE_IP_ADDRESSES,
-  ScheduleType,
-  TYPE_OFFICE,
-} from "@constants";
+import ScheduleTable from "@components/ScheduleTable";
+import { KOREAN_DAY, OFFICE_IP_ADDRESSES, TYPE_OFFICE } from "@constants";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
 import { parseTimeMS } from "@libs/client/util";
@@ -86,14 +83,19 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     (async () => {
+      if (!user) {
+        return;
+      }
       const { ok, ipAddress: clientIp } = await getData(
         "/api/getClientIpAddress"
       );
       if (ok) {
         setIpAddress(clientIp);
+      } else {
+        alert("Invalid network access");
       }
       const data: { schedules?: schedule[] } = await getData(
-        "/api/schedule/getSchedules"
+        "/api/schedule/getSchedules/" + user.id
       );
       if (data?.schedules) {
         if (data.schedules.length === 0 || data.schedules[0].finishedAt) {
@@ -120,26 +122,7 @@ const Home: NextPage = () => {
         );
       }
     })();
-  }, []);
-
-  const reducer = (prev: number, current: schedule) =>
-    prev + (current.finishedAt?.valueOf() ?? 0) - current.startedAt.valueOf();
-
-  const workDays = schedules[0]
-    ? schedules[0]?.finishedAt
-      ? schedules.length
-      : schedules.length - 1
-    : 0;
-
-  const workTime = schedules[0]
-    ? schedules[0].finishedAt
-      ? schedules.reduce(reducer, 0)
-      : schedules.slice(1).reduce(reducer, 0)
-    : 0;
-
-  const { hour: avgHour, min: avgMin } = parseTimeMS(
-    workDays > 0 ? workTime / workDays : 0
-  );
+  }, [user]);
 
   const {
     hour: workedHour,
@@ -199,77 +182,11 @@ const Home: NextPage = () => {
           </div>
         )}
       </div>
-      <div className="w-full">
-        <div className="w-full px-2 md:w-2/3 md:mx-auto">
-          <div className="flex justify-end space-x-2 font-medium mb-4">
-            <div>근무일수 {workDays}일</div>
-            <div>|</div>
-            <div>
-              평균 근무시간 {avgHour > 0 ? avgHour + "시간 " : ""}
-              {avgMin}분
-            </div>
-          </div>
-          <div className="flex border-b h-7 mb-1">
-            <div className="flex-[1.2]">날짜</div>
-            <div className="flex-1">출근</div>
-            <div className="flex-1">퇴근</div>
-            <div className="flex-1">근무시간</div>
-          </div>
-          <div className="">
-            {schedules.map((schedule, i) => {
-              let year = schedule.startedAt.getFullYear(); // 년도
-              let month = schedule.startedAt.getMonth() + 1; // 월
-              let date = schedule.startedAt.getDate(); // 날짜
-              let day = schedule.startedAt.getDay(); // 요일
-
-              let hour = 0,
-                min = 0;
-
-              const workTime = schedule.finishedAt
-                ? schedule.finishedAt.valueOf() - schedule.startedAt.valueOf()
-                : 0;
-
-              if (workTime) {
-                const { hour: h, min: m } = parseTimeMS(workTime);
-                hour = h;
-                min = m;
-              }
-
-              return (
-                <div
-                  key={i}
-                  className="flex border-b-[1px] last:border-0 text-sm md:text-lg"
-                >
-                  <div className="flex-[1.2]">{`${year}/${month}/${date} (${KOREAN_DAY[day]})`}</div>
-                  <div className="flex-1">
-                    {schedule.startedAt
-                      .toLocaleTimeString("en", {
-                        hour12: false,
-                      })
-                      .substring(0, 5)}
-                  </div>
-                  <div className="flex-1">
-                    {schedule.finishedAt
-                      ? schedule.finishedAt
-                          .toLocaleTimeString("en", {
-                            hour12: false,
-                          })
-                          .substring(0, 5)
-                      : null}
-                  </div>
-                  <div className="flex-1">
-                    {schedule.finishedAt
-                      ? (hour > 0 ? hour + "시간 " : "") + min + "분"
-                      : "근무중"}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <ScheduleTable schedules={schedules} />
     </Layout>
-  ) : null;
+  ) : (
+    <Loading />
+  );
 };
 
 export default Home;

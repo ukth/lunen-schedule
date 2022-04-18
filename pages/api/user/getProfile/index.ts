@@ -3,28 +3,30 @@ import withHandler, { ResponseType } from "@libs/server/withHandler";
 import client from "@libs/server/client";
 import { withApiSession } from "@libs/server/withSession";
 
+interface GetProfileParams {
+  id?: number;
+}
+
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  if (req.method === "GET") {
-    const schedules = await client.schedule.findMany({
-      where: { userId: req.session.user?.id },
-      orderBy: [
-        {
-          startedAt: "desc",
-        },
-      ],
-      take: 20,
-    });
+  const userId = req.session.user?.id;
 
+  if (!userId) {
     return res.json({
+      ok: false,
+      error: "pleas log in first",
+    });
+  }
+
+  if (req.method === "GET") {
+    const user = await client.user.findUnique({
+      where: { id: userId },
+    });
+    res.json({
       ok: true,
-      schedules: schedules.map((schedule) => ({
-        ...schedule,
-        startedAt: schedule.startedAt.valueOf(),
-        finishedAt: schedule.finishedAt?.valueOf() ?? null,
-      })),
+      user,
     });
   }
 }
