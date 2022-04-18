@@ -26,7 +26,7 @@ const ScheduleTable = ({ schedules }: ScheduleTableParams) => {
   );
 
   return (
-    <div className="w-full px-2 md:w-2/3 md:mx-auto">
+    <div className="w-full md:w-2/3 md:mx-auto bg-white rounded-xl py-3 px-4 shadow-md ">
       <div className="flex justify-end space-x-2 font-medium mb-4">
         <div>근무일수 {workDays}일</div>
         <div>|</div>

@@ -44,9 +44,8 @@ const Login: NextPage = () => {
           {members.map((member, i) => (
             <Link key={i} href={`/schedule/${member.id}`}>
               <a
-                className="p-5 w-48 flex items-center border-b-[1px] last:border-0 text-lg
-              bg-white rounded-md shadow-sm mb-3
-              hover:bg-gray-50 active:scale-[0.98]"
+                className="p-5 w-48 flex items-center border-b-[1px] last:border-0 text-lg font-medium text-gray-800
+              bg-white rounded-md shadow-sm mb-5 hover:bg-gray-50 active:scale-[0.98]"
               >
                 {member.name}
               </a>
