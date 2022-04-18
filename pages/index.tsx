@@ -154,7 +154,10 @@ const Home: NextPage = () => {
         <div className="text-2xl md:text-6xl font-semibold">
           {workingStatus.isWorking
             ? timeWorked > 0
-              ? workedHour + "h " + workedMin + "m " + workedSec + "s"
+              ? (workedHour > 0 ? workedHour + "h " : "") +
+                (workedMin > 0 ? workedMin + "m " : "") +
+                workedSec +
+                "s"
               : null
             : displayTime.toLocaleString("ko-KR")}
         </div>
