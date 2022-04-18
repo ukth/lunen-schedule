@@ -21,14 +21,12 @@ async function handler(
     // //@ts-ignore
     // console.log("req", req);
     // console.log("req.connection?.remoteAddress", req.connection?.remoteAddress);
+    const a = JSON.stringify(req);
 
     res.json({
       ok: true,
       ipAddress,
-      req: {
-        headers: req.headers,
-        connection: req.connection,
-      },
+      req: a,
     });
   }
 }
