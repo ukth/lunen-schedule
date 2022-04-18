@@ -21,12 +21,17 @@ async function handler(
     // //@ts-ignore
     // console.log("req", req);
     // console.log("req.connection?.remoteAddress", req.connection?.remoteAddress);
+
     const a = JSON.stringify(req);
 
     res.json({
       ok: true,
       ipAddress,
-      req: a,
+
+      "req.headers": req.headers,
+      'req.headers["x-real-ip"]': req.headers["x-real-ip"],
+      'req.headers["x-forwarded-for"]': req.headers["x-forwarded-for"],
+      "req.connection?.remoteAddress": req.connection?.remoteAddress,
     });
   }
 }
