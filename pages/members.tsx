@@ -36,21 +36,23 @@ const Login: NextPage = () => {
     })();
   }, []);
 
-  return members.length && user ? (
+  return (
     <Layout title="Members" whiteBackground>
-      <NavBar user={user} />
-      <div className="w-2/3 mx-auto pt-80">
-        {members.map((member, i) => (
-          <Link key={i} href={`/schedule/${member.id}`}>
-            <a className="w-40 h-10 flex items-center border-b-[1px] last:border-0 text-lg hover:underline ">
-              {member.name}
-            </a>
-          </Link>
-        ))}
-      </div>
+      {user ? <NavBar user={user} /> : null}
+      {members.length ? (
+        <div className="w-2/3 mx-auto pt-80">
+          {members.map((member, i) => (
+            <Link key={i} href={`/schedule/${member.id}`}>
+              <a className="w-40 h-10 flex items-center border-b-[1px] last:border-0 text-lg hover:underline ">
+                {member.name}
+              </a>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <Loading />
+      )}
     </Layout>
-  ) : (
-    <Loading />
   );
 };
 

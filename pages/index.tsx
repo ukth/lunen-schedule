@@ -42,6 +42,12 @@ const Home: NextPage = () => {
   // ip => is Office
 
   useEffect(() => {
+    //
+    if (process.env.NODE_ENV === "development") {
+      setIpAddress("221.149.114.252");
+    }
+    //
+
     const id = setInterval(() => {
       setDisplaytime(new Date());
     }, 100);
@@ -90,6 +96,7 @@ const Home: NextPage = () => {
         "/api/getClientIpAddress"
       );
       if (ok) {
+        console.log(clientIp);
         setIpAddress(clientIp);
       } else {
         alert("Invalid network access");
@@ -130,62 +137,66 @@ const Home: NextPage = () => {
     sec: workedSec,
   } = parseTimeMS(timeWorked);
 
-  return ipAddress && workingStatus && dataLoaded && user ? (
+  return (
     <Layout>
-      <NavBar user={user} />
-      <div className="h-1/3 w-full flex items-end justify-center">
-        <div className="text-2xl md:text-6xl font-semibold">
-          {workingStatus.isWorking
-            ? timeWorked > 0
-              ? (workedHour > 0 ? workedHour + "h " : "") +
-                (workedHour > 0 || workedMin > 0 ? workedMin + "m " : "") +
-                workedSec +
-                "s"
-              : null
-            : displayTime.toLocaleString("ko-KR")}
-        </div>
-      </div>
-      <div className="h-1/6 w-full flex items-end justify-center mb-10">
-        {OFFICE_IP_ADDRESSES.includes(ipAddress) ? (
-          !workingStatus?.isWorking ? (
-            <button
-              className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
-            text-lg text-white
-            hover:ring-2 ring-offset-1 ring-blue-400"
-              onClick={async () => {
-                arrive({
-                  type: TYPE_OFFICE,
-                  userId: user.id,
-                });
-              }}
-            >
-              출근
-            </button>
-          ) : (
-            <button
-              className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
-            text-lg text-white
-            hover:ring-2 ring-offset-1 ring-blue-400"
-              onClick={() => {
-                depart({
-                  type: TYPE_OFFICE,
-                  scheduleId: workingStatus.scheduleId,
-                });
-              }}
-            >
-              퇴근
-            </button>
-          )
-        ) : (
-          <div className="flex justify-center items-center h-8 md:text-lg">
-            사무실 인터넷에 연결되어 있지 않습니다.
+      {user ? <NavBar user={user} /> : null}
+      {ipAddress && workingStatus && dataLoaded && user ? (
+        <>
+          <div className="h-1/3 w-full flex items-end justify-center">
+            <div className="text-2xl md:text-6xl font-semibold">
+              {workingStatus.isWorking
+                ? timeWorked > 0
+                  ? (workedHour > 0 ? workedHour + "h " : "") +
+                    (workedHour > 0 || workedMin > 0 ? workedMin + "m " : "") +
+                    workedSec +
+                    "s"
+                  : null
+                : displayTime.toLocaleString("ko-KR")}
+            </div>
           </div>
-        )}
-      </div>
-      <ScheduleTable schedules={schedules} />
+          <div className="h-1/6 w-full flex items-end justify-center mb-10">
+            {OFFICE_IP_ADDRESSES.includes(ipAddress) ? (
+              !workingStatus?.isWorking ? (
+                <button
+                  className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
+            text-lg text-white
+            hover:ring-2 ring-offset-1 ring-blue-400"
+                  onClick={async () => {
+                    arrive({
+                      type: TYPE_OFFICE,
+                      userId: user.id,
+                    });
+                  }}
+                >
+                  출근
+                </button>
+              ) : (
+                <button
+                  className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
+            text-lg text-white
+            hover:ring-2 ring-offset-1 ring-blue-400"
+                  onClick={() => {
+                    depart({
+                      type: TYPE_OFFICE,
+                      scheduleId: workingStatus.scheduleId,
+                    });
+                  }}
+                >
+                  퇴근
+                </button>
+              )
+            ) : (
+              <div className="flex justify-center items-center h-8 md:text-lg">
+                사무실 인터넷에 연결되어 있지 않습니다.
+              </div>
+            )}
+          </div>
+          <ScheduleTable schedules={schedules} />
+        </>
+      ) : (
+        <Loading />
+      )}
     </Layout>
-  ) : (
-    <Loading />
   );
 };
 

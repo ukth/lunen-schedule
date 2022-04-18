@@ -21,29 +21,16 @@ export default function useUser() {
     error: undefined,
   });
 
-  const router = useRef(useRouter());
+  const { data, error } = useSWR<UserResponse>(
+    typeof window === "undefined" ? null : "/api/user/getProfile"
+  );
 
+  const router = useRouter();
   useEffect(() => {
-    (async () => {
-      fetch("/api/user/getProfile", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json().catch(() => {}))
-        .then((data) => {
-          if (data?.user) {
-            setSate((prev) => ({ ...prev, user: data?.user, loading: false }));
-          } else {
-            router.current.push("/login");
-          }
-        })
-        .catch((error) =>
-          setSate((prev) => ({ ...prev, error, loading: false }))
-        );
-    })();
-  }, [router]);
+    if (data && !data.ok) {
+      router.replace("/login");
+    }
+  }, [data, router]);
 
-  return state;
+  return { user: data?.user, loading: !data && !error };
 }

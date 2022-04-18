@@ -26,7 +26,7 @@ async function handler(
 
     const schedules = await client.schedule.findMany({
       where: {
-        userId: Number(userId),
+        userId: +userId,
       },
       orderBy: [
         {

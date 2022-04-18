@@ -58,19 +58,23 @@ const SchedulePage: NextPage = () => {
     })();
   }, [router]);
 
-  return schedules && profile && user ? (
+  return (
     <Layout>
-      <NavBar user={user} />
-      <div className="h-1/3 w-full flex items-end justify-center mb-20">
-        <div className="text-xl md:text-3xl font-semibold">
-          {profile.name}님 근무 기록표
-        </div>
-      </div>
+      {user ? <NavBar user={user} /> : null}
+      {profile && schedules ? (
+        <>
+          <div className="h-1/3 w-full flex items-end justify-center mb-20">
+            <div className="text-xl md:text-3xl font-semibold">
+              {profile.name}님 근무 기록표
+            </div>
+          </div>
 
-      <ScheduleTable schedules={schedules} />
+          <ScheduleTable schedules={schedules} />
+        </>
+      ) : (
+        <Loading />
+      )}
     </Layout>
-  ) : (
-    <Loading />
   );
 };
 

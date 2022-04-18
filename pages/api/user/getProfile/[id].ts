@@ -25,7 +25,7 @@ async function handler(
 
   if (req.method === "GET") {
     const user = await client.user.findUnique({
-      where: { id: Number(userId) },
+      where: { id: +userId },
     });
     res.json({
       ok: true,

@@ -11,10 +11,17 @@ async function handler(
     const ipAddress =
       req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
 
-    res.json({
-      ok: true,
-      ipAddress,
-    });
+    if (ipAddress) {
+      res.json({
+        ok: true,
+        ipAddress,
+      });
+    } else {
+      res.json({
+        ok: false,
+        error: "Invalid network access.",
+      });
+    }
   }
 }
 
