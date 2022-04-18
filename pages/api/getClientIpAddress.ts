@@ -11,7 +11,15 @@ async function handler(
     const ipAddress = req.socket.remoteAddress;
     // console.log(req.socket);
     // console.log(ipAddress);
-    // console.log(req.headers);
+
+    console.log("req.headers", req.headers);
+    console.log('req.headers["x-real-ip"]', req.headers["x-real-ip"]);
+    console.log(
+      'req.headers["x-forwarded-for"]',
+      req.headers["x-forwarded-for"]
+    );
+    console.log("req.ip", req.ip);
+    console.log("req.connection?.remoteAddress", req.connection?.remoteAddress);
 
     res.json({
       ok: true,
