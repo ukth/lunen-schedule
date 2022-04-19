@@ -3,10 +3,6 @@ import withHandler, { ResponseType } from "@libs/server/withHandler";
 import client from "@libs/server/client";
 import { withApiSession } from "@libs/server/withSession";
 
-interface GetSchedulesParams {
-  id?: number;
-}
-
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
@@ -17,7 +13,7 @@ async function handler(
       session: { user },
     } = req;
 
-    if (Array.isArray(userId)) {
+    if (!Number.isInteger(+userId)) {
       return res.json({
         ok: false,
         error: "Invalid user id",

@@ -1,13 +1,42 @@
 import { KOREAN_DAY } from "@constants";
+import useSchedules from "@libs/client/useSchedules";
 import { parseTimeMS } from "@libs/client/util";
+import getData from "@libs/server/getData";
 import { schedule } from "@prisma/client";
+import { useEffect, useState } from "react";
+import Loading from "./Loading";
 
 interface ScheduleTableParams {
-  schedules: schedule[];
+  id: number;
 }
-const ScheduleTable = ({ schedules }: ScheduleTableParams) => {
+
+const ScheduleTable = ({ id }: ScheduleTableParams) => {
+  // const { schedules, loading } = useSchedules({ id });
+  const [schedules, setSchedules] = useState<schedule[]>([]);
   const reducer = (prev: number, current: schedule) =>
     prev + (current.finishedAt?.valueOf() ?? 0) - current.startedAt.valueOf();
+
+  useEffect(() => {
+    (async () => {
+      const data: { schedules?: schedule[] } = await getData(
+        "/api/schedule/getSchedules/" + id
+      );
+
+      if (data?.schedules) {
+        setSchedules(
+          data.schedules.map((schedule) => ({
+            ...schedule,
+            startedAt: new Date(schedule.startedAt),
+            finishedAt: schedule.finishedAt
+              ? new Date(schedule.finishedAt)
+              : null,
+          }))
+        );
+      }
+    })();
+  }, [id]);
+
+  if (!schedules) return null;
 
   const workDays = schedules[0]
     ? schedules[0]?.finishedAt
@@ -25,7 +54,7 @@ const ScheduleTable = ({ schedules }: ScheduleTableParams) => {
     workDays > 0 ? workTime / workDays : 0
   );
 
-  return (
+  return schedules.length ? (
     <div className="w-full md:w-2/3 md:mx-auto bg-white rounded-xl py-3 px-4 shadow-md ">
       <div className="flex justify-end space-x-2 font-medium mb-4">
         <div>근무일수 {workDays}일</div>
@@ -35,7 +64,7 @@ const ScheduleTable = ({ schedules }: ScheduleTableParams) => {
           {avgMin}분
         </div>
       </div>
-      <div className="flex border-b h-7 mb-1">
+      <div className="flex border-b h-7 mb-1 text-sm md:text-lg font-semibold">
         <div className="flex-[1.2]">날짜</div>
         <div className="flex-1">출근</div>
         <div className="flex-1">퇴근</div>
@@ -93,7 +122,7 @@ const ScheduleTable = ({ schedules }: ScheduleTableParams) => {
         })}
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default ScheduleTable;

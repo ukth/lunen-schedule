@@ -25,7 +25,6 @@ const Register: NextPage = () => {
   useEffect(() => {
     if (data?.ok) {
       router.push("/login");
-      console.log("routing!");
     }
   }, [data, router]);
 

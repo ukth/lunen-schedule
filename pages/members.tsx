@@ -12,36 +12,32 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 
 interface LoginForm {
   username: string;
   password: string;
 }
 
+interface MembersResponse {
+  ok: boolean;
+  members: User[];
+}
+
 const Login: NextPage = () => {
   const router = useRouter();
+  const { data, error } = useSWR<MembersResponse>(
+    typeof window === "undefined" ? null : "/api/user/getMembers"
+  );
 
   const { user, loading: userLoading } = useUser();
-  const [members, setMembers] = useState<User[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      const { ok, members } = await getData("/api/user/getMembers");
-      console.log(members);
-      if (ok) {
-        setMembers(members);
-      } else {
-        alert("data load failed.");
-      }
-    })();
-  }, []);
 
   return (
     <Layout title="Members">
       {user ? <NavBar user={user} /> : null}
-      {members.length ? (
+      {data?.members?.length ? (
         <div className="w-2/3 mx-auto pt-52">
-          {members.map((member, i) => (
+          {data.members.map((member, i) => (
             <Link key={i} href={`/schedule/${member.id}`}>
               <a
                 className="p-5 w-48 flex items-center border-b-[1px] last:border-0 text-lg font-medium text-gray-800

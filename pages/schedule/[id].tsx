@@ -2,74 +2,49 @@ import Layout from "@components/Layout";
 import Loading from "@components/Loading";
 import NavBar from "@components/NavBar";
 import ScheduleTable from "@components/ScheduleTable";
-import { KOREAN_DAY, OFFICE_IP_ADDRESSES, TYPE_OFFICE } from "@constants";
-import useMutation from "@libs/client/useMutation";
-import useUser from "@libs/client/useUser";
-import { parseTimeMS } from "@libs/client/util";
-import getData from "@libs/server/getData";
-import { ResponseType } from "@libs/server/withHandler";
-import { schedule, User } from "@prisma/client";
+import useUser, { UserResponse } from "@libs/client/useUser";
+import { schedule } from "@prisma/client";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import useSWR from "swr";
+
+export interface SchedulesResponse {
+  ok: boolean;
+  schedules: schedule[];
+}
 
 const SchedulePage: NextPage = () => {
   const router = useRouter();
   const { user } = useUser();
-  const [profile, setProfile] = useState<User>();
 
-  const [schedules, setSchedules] = useState<schedule[]>();
+  const { data: userData, error } = useSWR<UserResponse>(
+    typeof window === "undefined" || !router.query.id
+      ? null
+      : "/api/user/getProfile/" + router.query.id
+  );
 
   useEffect(() => {
-    console.log("in ID component!!");
-    (async () => {
-      if (!router.query.id) {
-        return;
-      }
-
-      const userData: { ok: boolean; user: User } = await getData(
-        "/api/user/getProfile/" + router.query.id
-      );
-      console.log(userData);
-      if (userData?.ok) {
-        setProfile(userData.user);
-      } else {
-        alert("user not found!");
-        router.back();
-      }
-
-      const data: { schedules?: schedule[] } = await getData(
-        "/api/schedule/getSchedules/" + router.query.id
-      );
-
-      console.log(data);
-
-      if (data?.schedules) {
-        setSchedules(
-          data.schedules.map((schedule) => ({
-            ...schedule,
-            startedAt: new Date(schedule.startedAt),
-            finishedAt: schedule.finishedAt
-              ? new Date(schedule.finishedAt)
-              : null,
-          }))
-        );
-      }
-    })();
-  }, [router]);
+    if (userData && !userData.ok) {
+      alert("user not  found!");
+      router.back();
+    }
+  }, [router, userData]);
 
   return (
     <Layout title="Schedule">
       {user ? <NavBar user={user} /> : null}
-      {profile && schedules ? (
+      {userData?.user ? (
         <>
-          <div className="h-1/3 w-full flex items-end justify-center mb-20">
-            <div className="text-xl md:text-3xl font-semibold">
-              {profile.name}님 근무 기록표
+          {userData?.user ? (
+            <div className="h-1/3 w-full flex items-end justify-center mb-20">
+              <div className="text-xl md:text-3xl font-semibold">
+                {userData.user.name}님 근무 기록표
+              </div>
             </div>
-          </div>
+          ) : null}
 
-          <ScheduleTable schedules={schedules} />
+          {router.query.id ? <ScheduleTable id={+router.query.id} /> : null}
         </>
       ) : (
         <Loading />

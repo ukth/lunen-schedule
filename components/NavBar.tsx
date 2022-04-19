@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 
 interface NavbarProps {
-  user: User;
+  user?: User;
 }
 
 const NavBar = ({ user }: NavbarProps) => {
@@ -43,16 +43,18 @@ const NavBar = ({ user }: NavbarProps) => {
           Lunen
         </div>
       </div>
-      <div className="flex items-center space-x-4">
-        <div>안녕하세요, {user.name}님!</div>
-        <button
-          className="w-20 h-6 bg-slate-400 rounded-md text-sm text-white font-semibold
+      {user ? (
+        <div className="flex items-center space-x-4">
+          <div>안녕하세요, {user.name}님!</div>
+          <button
+            className="w-20 h-6 bg-slate-400 rounded-md text-sm text-white font-semibold
           hover:ring-2 ring-slate-500 ring-offset-1"
-          onClick={logout}
-        >
-          로그아웃
-        </button>
-      </div>
+            onClick={logout}
+          >
+            로그아웃
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

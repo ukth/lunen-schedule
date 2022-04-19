@@ -96,7 +96,6 @@ const Home: NextPage = () => {
         "/api/getClientIpAddress"
       );
       if (ok) {
-        console.log(clientIp);
         setIpAddress(clientIp);
       } else {
         alert("Invalid network access");
@@ -139,7 +138,7 @@ const Home: NextPage = () => {
 
   return (
     <Layout title="Main">
-      {user ? <NavBar user={user} /> : null}
+      <NavBar user={user} />
       {ipAddress && workingStatus && dataLoaded && user ? (
         <>
           <div className="h-1/3 w-full flex items-end justify-center">
@@ -191,7 +190,7 @@ const Home: NextPage = () => {
               </div>
             )}
           </div>
-          <ScheduleTable schedules={schedules} />
+          <ScheduleTable id={user.id} />
         </>
       ) : (
         <Loading />
