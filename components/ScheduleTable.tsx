@@ -4,35 +4,46 @@ import { analyzeSchedules, parseTimeMS } from "@libs/client/util";
 import getData from "@libs/server/getData";
 import { schedule } from "@prisma/client";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
 import Loading from "./Loading";
 
 interface ScheduleTableParams {
-  id: number;
+  id: number | undefined;
+}
+
+interface SchedulesResponse {
+  ok: boolean;
+  schedules: schedule[];
 }
 
 const ScheduleTable = ({ id }: ScheduleTableParams) => {
   // const { schedules, loading } = useSchedules({ id });
   const [schedules, setSchedules] = useState<schedule[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      const data: { schedules?: schedule[] } = await getData(
-        "/api/schedule/getSchedules/" + id
-      );
+  const { schedules: sss } = useSchedules({ id });
+  console.log(id, sss);
 
-      if (data?.schedules) {
-        setSchedules(
-          data.schedules.map((schedule) => ({
-            ...schedule,
-            startedAt: new Date(schedule.startedAt),
-            finishedAt: schedule.finishedAt
-              ? new Date(schedule.finishedAt)
-              : null,
-          }))
-        );
-      }
-    })();
-  }, [id]);
+  const { data } = useSWR<SchedulesResponse>(
+    typeof window === "undefined"
+      ? null
+      : id
+      ? "/api/schedule/getSchedules/" + id
+      : null
+  );
+
+  useEffect(() => {
+    if (data?.schedules) {
+      setSchedules(
+        data.schedules.map((schedule) => ({
+          ...schedule,
+          startedAt: new Date(schedule.startedAt),
+          finishedAt: schedule.finishedAt
+            ? new Date(schedule.finishedAt)
+            : null,
+        }))
+      );
+    }
+  }, [data]);
 
   if (!schedules) return null;
 

@@ -6,12 +6,16 @@ export interface SchedulesResponse {
   schedules: schedule[];
 }
 
-export default function useSchedules({ id }: { id: number }) {
+export default function useSchedules({ id }: { id: number | undefined }) {
   const { data, error } = useSWR<SchedulesResponse>(
-    typeof window === "undefined" || id
-      ? null
-      : "/api/schedule/getSchedules/" + id
+    id
+      ? typeof window === "undefined" || id
+        ? null
+        : "/api/schedule/getSchedules/" + id
+      : null
   );
+
+  console.log("data", data);
 
   return {
     schedules: data?.schedules.map((schedule) => ({

@@ -44,7 +44,7 @@ const SchedulePage: NextPage = () => {
             </div>
           ) : null}
 
-          {router.query.id ? <ScheduleTable id={+router.query.id} /> : null}
+          <ScheduleTable id={router.query.id ? +router.query.id : undefined} />
         </>
       ) : (
         <Loading />
