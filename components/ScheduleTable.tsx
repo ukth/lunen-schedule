@@ -20,9 +20,6 @@ const ScheduleTable = ({ id }: ScheduleTableParams) => {
   // const { schedules, loading } = useSchedules({ id });
   const [schedules, setSchedules] = useState<schedule[]>([]);
 
-  const { schedules: sss } = useSchedules({ id });
-  console.log(id, sss);
-
   const { data } = useSWR<SchedulesResponse>(
     typeof window === "undefined"
       ? null
