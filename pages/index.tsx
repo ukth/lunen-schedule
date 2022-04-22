@@ -1,8 +1,14 @@
+import { Button } from "@components/Button";
 import Layout from "@components/Layout";
 import Loading from "@components/Loading";
 import NavBar from "@components/NavBar";
 import ScheduleTable from "@components/ScheduleTable";
-import { KOREAN_DAY, OFFICE_IP_ADDRESSES, TYPE_OFFICE } from "@constants";
+import {
+  KOREAN_DAY,
+  OFFICE_IP_ADDRESSES,
+  TYPE_OFFICE,
+  TYPE_OUTSIDE,
+} from "@constants";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
 import { parseTimeMS } from "@libs/client/util";
@@ -42,11 +48,9 @@ const Home: NextPage = () => {
   // ip => is Office
 
   useEffect(() => {
-    //
     if (process.env.NODE_ENV === "development") {
       setIpAddress("221.149.114.252");
     }
-    //
 
     const id = setInterval(() => {
       setDisplaytime(new Date());
@@ -76,6 +80,9 @@ const Home: NextPage = () => {
       console.log("기록되었습니다.");
       alert("기록되었습니다.");
       router.reload();
+    } else if (arriveResult?.ok === false) {
+      console.log(arriveResult.error);
+      alert(arriveResult.error);
     }
   }, [router, arriveResult]);
 
@@ -84,6 +91,9 @@ const Home: NextPage = () => {
       console.log("기록되었습니다.");
       alert("기록되었습니다.");
       router.reload();
+    } else if (departResult?.ok === false) {
+      console.log(departResult.error);
+      alert(departResult.error);
     }
   }, [router, departResult]);
 
@@ -156,10 +166,7 @@ const Home: NextPage = () => {
           <div className="h-1/6 w-full flex items-end justify-center mb-10">
             {OFFICE_IP_ADDRESSES.includes(ipAddress) ? (
               !workingStatus?.isWorking ? (
-                <button
-                  className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
-            text-lg text-white
-            hover:ring-2 ring-offset-1 ring-blue-400"
+                <Button
                   onClick={async () => {
                     arrive({
                       type: TYPE_OFFICE,
@@ -168,12 +175,9 @@ const Home: NextPage = () => {
                   }}
                 >
                   출근
-                </button>
+                </Button>
               ) : (
-                <button
-                  className="flex justify-center items-center w-20 h-8 rounded-md bg-blue-400
-            text-lg text-white
-            hover:ring-2 ring-offset-1 ring-blue-400"
+                <Button
                   onClick={() => {
                     depart({
                       type: TYPE_OFFICE,
@@ -182,11 +186,36 @@ const Home: NextPage = () => {
                   }}
                 >
                   퇴근
-                </button>
+                </Button>
               )
             ) : (
-              <div className="flex justify-center items-center h-8 md:text-lg">
-                사무실 인터넷에 연결되어 있지 않습니다.
+              <div className="flex flex-col items-center space-y-2">
+                <div className="flex justify-center items-center h-8 md:text-lg">
+                  사무실 인터넷에 연결되어 있지 않습니다.
+                </div>
+                {!workingStatus?.isWorking ? (
+                  <Button
+                    onClick={async () => {
+                      arrive({
+                        type: TYPE_OUTSIDE,
+                        userId: user.id,
+                      });
+                    }}
+                  >
+                    외근/출장
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      depart({
+                        type: TYPE_OUTSIDE,
+                        scheduleId: workingStatus.scheduleId,
+                      });
+                    }}
+                  >
+                    퇴근(외근/출장)
+                  </Button>
+                )}
               </div>
             )}
           </div>

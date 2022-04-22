@@ -2,7 +2,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import client from "@libs/server/client";
 import { withApiSession } from "@libs/server/withSession";
-import { OFFICE_IP_ADDRESSES, ScheduleType, TYPE_OFFICE } from "@constants";
+import {
+  OFFICE_IP_ADDRESSES,
+  ScheduleType,
+  TYPE_OFFICE,
+  TYPE_OUTSIDE,
+} from "@constants";
 
 interface DepartParams {
   scheduleId: number;
@@ -25,13 +30,6 @@ async function handler(
 
   const ipAddress =
     req.headers["x-real-ip"] || req.headers["x-forwarded-for"] || "";
-
-  if (Array.isArray(ipAddress) || !OFFICE_IP_ADDRESSES.includes(ipAddress)) {
-    return res.json({
-      ok: false,
-      error: "Invalid  ip address.",
-    });
-  }
 
   const schedule = await client.schedule.findUnique({
     where: {
@@ -56,8 +54,19 @@ async function handler(
   let data;
 
   if (type === TYPE_OFFICE) {
-    // ip validation
+    if (Array.isArray(ipAddress) || !OFFICE_IP_ADDRESSES.includes(ipAddress)) {
+      return res.json({
+        ok: false,
+        error: "Invalid  ip address.",
+      });
+    }
+
     data = {
+      finishedAt: new Date(),
+    };
+  } else if (type === TYPE_OUTSIDE) {
+    data = {
+      type,
       finishedAt: new Date(),
     };
   } else {
@@ -68,9 +77,7 @@ async function handler(
     where: {
       id: scheduleId,
     },
-    data: {
-      finishedAt: new Date(),
-    },
+    data,
   });
 
   if (modified) {

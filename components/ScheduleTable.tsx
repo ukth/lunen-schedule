@@ -1,6 +1,6 @@
 import { KOREAN_DAY } from "@constants";
 import useSchedules from "@libs/client/useSchedules";
-import { parseTimeMS } from "@libs/client/util";
+import { analyzeSchedules, parseTimeMS } from "@libs/client/util";
 import getData from "@libs/server/getData";
 import { schedule } from "@prisma/client";
 import { useEffect, useState } from "react";
@@ -13,8 +13,6 @@ interface ScheduleTableParams {
 const ScheduleTable = ({ id }: ScheduleTableParams) => {
   // const { schedules, loading } = useSchedules({ id });
   const [schedules, setSchedules] = useState<schedule[]>([]);
-  const reducer = (prev: number, current: schedule) =>
-    prev + (current.finishedAt?.valueOf() ?? 0) - current.startedAt.valueOf();
 
   useEffect(() => {
     (async () => {
@@ -38,21 +36,9 @@ const ScheduleTable = ({ id }: ScheduleTableParams) => {
 
   if (!schedules) return null;
 
-  const workDays = schedules[0]
-    ? schedules[0]?.finishedAt
-      ? schedules.length
-      : schedules.length - 1
-    : 0;
+  const { workDays, avgWorkTime } = analyzeSchedules(schedules);
 
-  const workTime = schedules[0]
-    ? schedules[0].finishedAt
-      ? schedules.reduce(reducer, 0)
-      : schedules.slice(1).reduce(reducer, 0)
-    : 0;
-
-  const { hour: avgHour, min: avgMin } = parseTimeMS(
-    workDays > 0 ? workTime / workDays : 0
-  );
+  const { hour: avgHour, min: avgMin } = parseTimeMS(avgWorkTime);
 
   return schedules.length ? (
     <div className="w-full md:w-2/3 md:mx-auto bg-white rounded-xl py-3 px-4 shadow-md ">
