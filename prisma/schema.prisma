@@ -26,11 +26,18 @@ model User {
 }
 
 model schedule {
-  id         Int       @id @default(autoincrement())
-  type       String
-  startedAt  DateTime  @default(now())
+  id         Int          @id @default(autoincrement())
+  type       ScheduleType
+  startedAt  DateTime     @default(now())
   finishedAt DateTime?
-  user       User      @relation(fields: [userId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
   userId     Int
-  modified   Boolean   @default(false)
+  modified   Boolean      @default(false)
+}
+
+enum ScheduleType {
+  office
+  outside
+  home
+  extra
 }
