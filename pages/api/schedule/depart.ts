@@ -2,12 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import client from "@libs/server/client";
 import { withApiSession } from "@libs/server/withSession";
-import {
-  OFFICE_IP_ADDRESSES,
-  ScheduleType,
-  TYPE_OFFICE,
-  TYPE_OUTSIDE,
-} from "@constants";
+import { OFFICE_IP_ADDRESSES, TYPE_OFFICE, TYPE_OUTSIDE } from "@constants";
+import { ScheduleType } from "@prisma/client";
 
 interface DepartParams {
   scheduleId: number;

@@ -1,10 +1,10 @@
+import { ScheduleType } from "@prisma/client";
+
 export const OFFICE_IP_ADDRESSES = [
   "221.149.114.252",
   "218.153.187.125",
   "218.153.187.124",
 ];
-
-export type ScheduleType = "office" | "outside" | "home" | "extra";
 
 export const TYPE_OFFICE: ScheduleType = "office";
 export const TYPE_OUTSIDE: ScheduleType = "outside";
