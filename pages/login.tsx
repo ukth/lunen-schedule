@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import superImage from "../public/super.png";
 
 interface LoginForm {
   username: string;
@@ -51,7 +52,8 @@ const Login: NextPage = () => {
           <div className="relative h-52 w-40 mb-4 mx-auto">
             <Image
               alt="prof"
-              src={"/super.png"}
+              src={superImage}
+              placeholder="blur"
               layout="fill"
               objectFit="cover"
             />
