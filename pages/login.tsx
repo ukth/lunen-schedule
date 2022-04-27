@@ -53,7 +53,6 @@ const Login: NextPage = () => {
             <Image
               alt="prof"
               src={superImage}
-              placeholder="blur"
               layout="fill"
               objectFit="cover"
             />
