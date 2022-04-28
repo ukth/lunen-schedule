@@ -74,7 +74,7 @@ const ScheduleTableRow = ({ schedule }: ScheduleTableRowParams) => {
   }, [ModifyResult, router]);
 
   const removeCheck = () => {
-    if (confirm("삭제하시겠습니까 ") == true) {
+    if (confirm("삭제하시겠습니까?") == true) {
       deleteSchedule({ scheduleId: schedule.id });
     } else {
       return;
