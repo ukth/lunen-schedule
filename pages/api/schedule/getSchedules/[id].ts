@@ -23,6 +23,9 @@ async function handler(
     const schedules = await client.schedule.findMany({
       where: {
         userId: +userId,
+        startedAt: {
+          gt: new Date(new Date().valueOf() - 30 * 24 * 60 * 60 * 1000),
+        },
       },
       orderBy: [
         {
