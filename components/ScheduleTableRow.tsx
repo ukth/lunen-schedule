@@ -69,12 +69,13 @@ const ScheduleTableRow = ({ schedule }: ScheduleTableRowParams) => {
     } else if (ModifyResult && !ModifyResult.ok) {
       alert("수정에 실패했습니다." + ModifyResult.error);
       setEditting(false);
+      setModifiedTime({ startedAt: "", finishedAt: "" });
     }
   }, [ModifyResult, router]);
 
-  const removeCheck = (scheduleId: number) => {
-    if (confirm("삭제하시겠습니까 ?") == true) {
-      deleteSchedule({ scheduleId });
+  const removeCheck = () => {
+    if (confirm("삭제하시겠습니까 ") == true) {
+      deleteSchedule({ scheduleId: schedule.id });
     } else {
       return;
     }
@@ -127,9 +128,15 @@ const ScheduleTableRow = ({ schedule }: ScheduleTableRowParams) => {
       );
     }
     if (data.startedAt || data.finishedAt) {
-      ModifySchedule(data);
+      if (confirm("수정하시겠습니까?") == true) {
+        ModifySchedule(data);
+      } else {
+        setEditting(false);
+        setModifiedTime({ startedAt: "", finishedAt: "" });
+      }
     } else {
       setEditting(false);
+      setModifiedTime({ startedAt: "", finishedAt: "" });
     }
   };
 
@@ -207,10 +214,7 @@ const ScheduleTableRow = ({ schedule }: ScheduleTableRowParams) => {
                 />
               </svg>
             </div>
-            <div
-              className="hover:cursor-pointer"
-              onClick={() => removeCheck(schedule.id)}
-            >
+            <div className="hover:cursor-pointer" onClick={removeCheck}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4 fill-gray-500 hover:fill-gray-700 active:scale-95"
