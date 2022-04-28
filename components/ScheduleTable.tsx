@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import Loading from "./Loading";
+import ScheduleTableRow from "./ScheduleTableRow";
 
 interface ScheduleTableParams {
   id: number | undefined;
@@ -91,77 +92,12 @@ const ScheduleTable = ({ id }: ScheduleTableParams) => {
         <div className="flex-1">출근</div>
         <div className="flex-1">퇴근</div>
         <div className="flex-1">근무시간</div>
-        {user?.id === schedules[0].userId ? <div className="w-5" /> : null}
+        {user?.id === schedules[0].userId ? <div className="w-10" /> : null}
       </div>
       <div className="">
-        {schedules.map((schedule, i) => {
-          let year = schedule.startedAt.getFullYear(); // 년도
-          let month = schedule.startedAt.getMonth() + 1; // 월
-          let date = schedule.startedAt.getDate(); // 날짜
-          let day = schedule.startedAt.getDay(); // 요일
-
-          let hour = 0,
-            min = 0;
-
-          const workTime = schedule.finishedAt
-            ? schedule.finishedAt.valueOf() - schedule.startedAt.valueOf()
-            : 0;
-
-          if (workTime) {
-            const { hour: h, min: m } = parseTimeMS(workTime);
-            hour = h;
-            min = m;
-          }
-
-          return (
-            <div
-              key={i}
-              className="flex items-center border-b-[1px] last:border-0 text-sm md:text-lg py-[2px]"
-            >
-              <div className="flex-[1.2]">{`${year}/${month}/${date} (${KOREAN_DAY[day]})`}</div>
-              <div className="flex-1">
-                {schedule.startedAt
-                  .toLocaleTimeString("en", {
-                    hour12: false,
-                  })
-                  .substring(0, 5)}
-              </div>
-              <div className="flex-1">
-                {schedule.finishedAt
-                  ? schedule.finishedAt
-                      .toLocaleTimeString("en", {
-                        hour12: false,
-                      })
-                      .substring(0, 5)
-                  : null}
-              </div>
-              <div className="flex-1">
-                {schedule.finishedAt
-                  ? (hour > 0 ? hour + "시간 " : "") + min + "분"
-                  : "근무중"}
-              </div>
-              {user?.id === schedules[0].userId ? (
-                <div
-                  className="w-5 hover:cursor-pointer"
-                  onClick={() => removeCheck(schedule.id)}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 fill-gray-500"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
+        {schedules.map((schedule) => (
+          <ScheduleTableRow key={schedule.id} schedule={schedule} />
+        ))}
       </div>
     </div>
   ) : null;
