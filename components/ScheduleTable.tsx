@@ -1,15 +1,9 @@
-import { KOREAN_DAY } from "@constants";
-import useMutation from "@libs/client/useMutation";
-import useSchedules from "@libs/client/useSchedules";
 import useUser from "@libs/client/useUser";
 import { analyzeSchedules, parseTimeMS } from "@libs/client/util";
-import getData from "@libs/server/getData";
-import { ResponseType } from "@libs/server/withHandler";
 import { schedule } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Loading from "./Loading";
 import ScheduleTableRow from "./ScheduleTableRow";
 
 interface ScheduleTableParams {
@@ -22,15 +16,9 @@ interface SchedulesResponse {
 }
 
 const ScheduleTable = ({ id }: ScheduleTableParams) => {
-  // const { schedules, loading } = useSchedules({ id });
   const [schedules, setSchedules] = useState<schedule[]>([]);
   const router = useRouter();
   const { user } = useUser();
-
-  const [
-    deleteSchedule,
-    { data: deleteResult, loading: deleteMutationLoading },
-  ] = useMutation<ResponseType>("/api/schedule/delete");
 
   const { data } = useSWR<SchedulesResponse>(
     typeof window === "undefined"
@@ -54,28 +42,11 @@ const ScheduleTable = ({ id }: ScheduleTableParams) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    if (deleteResult && deleteResult.ok) {
-      alert("삭제되었습니다.");
-      router.reload();
-    } else if (deleteResult && !deleteResult.ok) {
-      alert("삭제에 실패했습니다." + deleteResult.error);
-    }
-  }, [deleteResult, router]);
-
   if (!schedules) return null;
 
   const { workDays, avgWorkTime } = analyzeSchedules(schedules);
 
   const { hour: avgHour, min: avgMin } = parseTimeMS(avgWorkTime);
-
-  const removeCheck = (scheduleId: number) => {
-    if (confirm("삭제하시겠습니까 ?") == true) {
-      deleteSchedule({ scheduleId });
-    } else {
-      return;
-    }
-  };
 
   return schedules.length ? (
     <div className="w-full md:w-2/3 md:mx-auto bg-white rounded-xl py-3 px-4 shadow-md mb-20">

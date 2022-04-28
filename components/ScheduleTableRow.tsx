@@ -1,15 +1,11 @@
 import { KOREAN_DAY } from "@constants";
 import useMutation from "@libs/client/useMutation";
-import useSchedules from "@libs/client/useSchedules";
 import useUser from "@libs/client/useUser";
-import { analyzeSchedules, parseTimeMS } from "@libs/client/util";
-import getData from "@libs/server/getData";
+import { parseTimeMS } from "@libs/client/util";
 import { ResponseType } from "@libs/server/withHandler";
 import { schedule } from "@prisma/client";
 import { useRouter } from "next/router";
-import { isValidElement, useEffect, useState } from "react";
-import useSWR from "swr";
-import Loading from "./Loading";
+import { useEffect, useState } from "react";
 
 interface ScheduleTableRowParams {
   schedule: schedule;

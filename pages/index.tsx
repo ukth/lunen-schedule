@@ -3,12 +3,7 @@ import Layout from "@components/Layout";
 import Loading from "@components/Loading";
 import NavBar from "@components/NavBar";
 import ScheduleTable from "@components/ScheduleTable";
-import {
-  KOREAN_DAY,
-  OFFICE_IP_ADDRESSES,
-  TYPE_OFFICE,
-  TYPE_OUTSIDE,
-} from "@constants";
+import { OFFICE_IP_ADDRESSES, TYPE_OFFICE, TYPE_OUTSIDE } from "@constants";
 import useMutation from "@libs/client/useMutation";
 import useUser from "@libs/client/useUser";
 import { parseTimeMS } from "@libs/client/util";
@@ -35,7 +30,6 @@ const Home: NextPage = () => {
     isWorking: boolean;
     scheduleId: number;
   }>();
-  const [isOffice, setIsOffice] = useState<boolean>();
 
   const [displayTime, setDisplaytime] = useState(new Date());
 
@@ -44,8 +38,6 @@ const Home: NextPage = () => {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const [ipAddress, setIpAddress] = useState<string>();
-  // schedule => isworking
-  // ip => is Office
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
@@ -68,12 +60,10 @@ const Home: NextPage = () => {
   }, [workingStatus]);
 
   useEffect(() => {
-    // need to fix!!
     if (user && schedules) {
-      // &&  isOffice === true or false
       setDataLoaded(true);
     }
-  }, [user, userLoading, schedules, isOffice]);
+  }, [user, userLoading, schedules]);
 
   useEffect(() => {
     if (arriveResult?.ok) {
