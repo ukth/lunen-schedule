@@ -6,8 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-
-import Seo from "../components/Seo";
+import superImage from "../public/super.png";
 
 interface RegisterForm {
   name: string;
@@ -40,7 +39,7 @@ const Register: NextPage = () => {
           <div className="relative h-52 w-40 mb-4 mx-auto">
             <Image
               alt="prof"
-              src={"/super.png"}
+              src={superImage}
               layout="fill"
               objectFit="cover"
             />

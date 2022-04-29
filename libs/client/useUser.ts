@@ -13,12 +13,5 @@ export default function useUser() {
     typeof window === "undefined" ? null : "/api/user/getProfile"
   );
 
-  const router = useRouter();
-  useEffect(() => {
-    if (data && !data.ok) {
-      router.replace("/login");
-    }
-  }, [data, router]);
-
   return { user: data?.user, loading: !data && !error };
 }

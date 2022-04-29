@@ -8,9 +8,9 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
     if (
       !req.url.includes("/login") &&
       !req.url.includes("/register") &&
-      !req.cookies.carrotsession
+      !req.cookies["lunen-schedule"]
     ) {
-      return NextResponse.redirect("/login");
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 }

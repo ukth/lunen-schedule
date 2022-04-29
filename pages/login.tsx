@@ -110,7 +110,7 @@ const Login: NextPage = () => {
             </div>
             <div className="flex mx-auto max-w-sm space-x-2">
               <button className="hover:bg-blue-300 active:scale-95 hover:text-white flex flex-1 items-center justify-center h-10 rounded-lg mb-4 border-2 px-2 mx-auto max-w-sm">
-                로그인
+                {loading ? "Loading..." : "로그인"}
               </button>
             </div>
           </form>

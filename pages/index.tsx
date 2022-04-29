@@ -8,7 +8,6 @@ import useMutation from "@libs/client/useMutation";
 import useSchedules from "@libs/client/useSchedules";
 import useUser from "@libs/client/useUser";
 import { parseTimeMS } from "@libs/client/util";
-import getData from "@libs/server/getData";
 import { ResponseType } from "@libs/server/withHandler";
 import { withSsrSession } from "@libs/server/withSession";
 import type { NextPage, NextPageContext } from "next";
@@ -186,7 +185,8 @@ export const getServerSideProps = withSsrSession(async function ({
   return {
     props: {
       userId: req?.session.user?.id,
-      ipAddress: req?.headers["x-real-ip"] || req?.headers["x-forwarded-for"],
+      ipAddress:
+        req?.headers["x-real-ip"] || req?.headers["x-forwarded-for"] || "",
     },
   };
 });
