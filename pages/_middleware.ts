@@ -5,9 +5,12 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
     return new Response("", { status: 403 });
   }
   if (!req.url.includes("/api")) {
-    if (!req.url.includes("/enter") && !req.cookies.carrotsession) {
-      return NextResponse.redirect("/enter");
+    if (
+      !req.url.includes("/login") &&
+      !req.url.includes("/register") &&
+      !req.cookies.carrotsession
+    ) {
+      return NextResponse.redirect("/login");
     }
   }
-  //  return NextResponse.json({ ok: true });
 }
