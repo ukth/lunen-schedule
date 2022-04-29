@@ -32,7 +32,7 @@ async function handler(
           startedAt: "desc",
         },
       ],
-      take: 20,
+      take: 50,
     });
 
     return res.json({

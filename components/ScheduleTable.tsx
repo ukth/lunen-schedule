@@ -1,54 +1,22 @@
+import useSchedules from "@libs/client/useSchedules";
 import useUser from "@libs/client/useUser";
 import { analyzeSchedules, parseTimeMS } from "@libs/client/util";
-import { schedule } from "@prisma/client";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
 import ScheduleTableRow from "./ScheduleTableRow";
 
 interface ScheduleTableParams {
-  id: number | undefined;
-}
-
-interface SchedulesResponse {
-  ok: boolean;
-  schedules: schedule[];
+  id?: number;
 }
 
 const ScheduleTable = ({ id }: ScheduleTableParams) => {
-  const [schedules, setSchedules] = useState<schedule[]>([]);
-  const router = useRouter();
   const { user } = useUser();
 
-  const { data } = useSWR<SchedulesResponse>(
-    typeof window === "undefined"
-      ? null
-      : id
-      ? "/api/schedule/getSchedules/" + id
-      : null
-  );
+  const { schedules } = useSchedules({ id });
 
-  useEffect(() => {
-    if (data?.schedules) {
-      setSchedules(
-        data.schedules.map((schedule) => ({
-          ...schedule,
-          startedAt: new Date(schedule.startedAt),
-          finishedAt: schedule.finishedAt
-            ? new Date(schedule.finishedAt)
-            : null,
-        }))
-      );
-    }
-  }, [data]);
-
-  if (!schedules) return null;
-
-  const { workDays, avgWorkTime } = analyzeSchedules(schedules);
+  const { workDays, avgWorkTime } = analyzeSchedules(schedules ?? []);
 
   const { hour: avgHour, min: avgMin } = parseTimeMS(avgWorkTime);
 
-  return schedules.length ? (
+  return schedules?.length ? (
     <div className="w-full md:w-2/3 md:mx-auto bg-white rounded-xl py-3 px-4 shadow-md mb-20">
       <div className="flex justify-end space-x-2 font-medium mb-4">
         <div>근무일수 {workDays}일</div>

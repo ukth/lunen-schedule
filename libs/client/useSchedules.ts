@@ -1,4 +1,5 @@
-import { schedule, User } from "@prisma/client";
+import { schedule } from "@prisma/client";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 export interface SchedulesResponse {
@@ -8,21 +9,29 @@ export interface SchedulesResponse {
 
 export default function useSchedules({ id }: { id: number | undefined }) {
   const { data, error } = useSWR<SchedulesResponse>(
-    id
-      ? typeof window === "undefined" || id
-        ? null
-        : "/api/schedule/getSchedules/" + id
-      : null
+    !id || typeof window === "undefined"
+      ? null
+      : "/api/schedule/getSchedules/" + id
   );
 
-  console.log("data", data);
+  const [schedules, setSchedules] = useState<schedule[]>();
+
+  useEffect(() => {
+    if (data?.ok) {
+      setSchedules(
+        data?.schedules.map((schedule) => ({
+          ...schedule,
+          startedAt: new Date(schedule.startedAt),
+          finishedAt: schedule.finishedAt
+            ? new Date(schedule.finishedAt)
+            : null,
+        }))
+      );
+    }
+  }, [data]);
 
   return {
-    schedules: data?.schedules.map((schedule) => ({
-      ...schedule,
-      startedAt: new Date(schedule.startedAt),
-      finishedAt: schedule.finishedAt ? new Date(schedule.finishedAt) : null,
-    })),
+    schedules,
     loading: !data && !error,
   };
 }

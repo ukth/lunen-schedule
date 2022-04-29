@@ -5,25 +5,27 @@ import NavBar from "@components/NavBar";
 import ScheduleTable from "@components/ScheduleTable";
 import { OFFICE_IP_ADDRESSES, TYPE_OFFICE, TYPE_OUTSIDE } from "@constants";
 import useMutation from "@libs/client/useMutation";
+import useSchedules from "@libs/client/useSchedules";
 import useUser from "@libs/client/useUser";
 import { parseTimeMS } from "@libs/client/util";
 import getData from "@libs/server/getData";
 import { ResponseType } from "@libs/server/withHandler";
-import { schedule } from "@prisma/client";
-import type { NextPage } from "next";
+import { withSsrSession } from "@libs/server/withSession";
+import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const Home: NextPage = () => {
+const Home: NextPage<{ userId: number }> = ({ userId }) => {
   const router = useRouter();
   const { user, loading: userLoading } = useUser();
-  const [schedules, setSchedules] = useState<schedule[]>([]);
 
   const [arrive, { data: arriveResult, loading: arriveMutationLoading }] =
     useMutation<ResponseType>("/api/schedule/arrive");
 
   const [depart, { data: departResult, loading: departMutationLoading }] =
     useMutation<ResponseType>("/api/schedule/depart");
+
+  const { schedules } = useSchedules({ id: userId });
 
   const [workingStatus, setWorkingStatus] = useState<{
     started: number;
@@ -35,35 +37,55 @@ const Home: NextPage = () => {
 
   const [timeWorked, setTimeWorked] = useState(0);
 
-  const [dataLoaded, setDataLoaded] = useState(false);
-
   const [ipAddress, setIpAddress] = useState<string>();
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       setIpAddress("221.149.114.252");
+      return;
     }
-
-    const id = setInterval(() => {
-      setDisplaytime(new Date());
-    }, 100);
-    return () => clearInterval(id);
+    (async () => {
+      const { ok, ipAddress: clientIp } = await getData(
+        "/api/getClientIpAddress"
+      );
+      if (ok) {
+        setIpAddress(clientIp);
+      } else {
+        alert("Invalid network access");
+      }
+    })();
   }, []);
 
   useEffect(() => {
     const id = setInterval(() => {
       if (workingStatus?.isWorking) {
         setTimeWorked(new Date().valueOf() - workingStatus.started);
+      } else {
+        setDisplaytime(new Date());
       }
-    }, 100);
+    }, 200);
     return () => clearInterval(id);
   }, [workingStatus]);
 
   useEffect(() => {
-    if (user && schedules) {
-      setDataLoaded(true);
+    if (schedules) {
+      if (schedules.length === 0 || schedules[0].finishedAt) {
+        setWorkingStatus({
+          started: 0,
+          isWorking: false,
+          scheduleId: 0,
+        });
+      } else {
+        setWorkingStatus({
+          started: schedules[0].startedAt.valueOf(),
+          isWorking: true,
+          scheduleId: schedules[0].id,
+        });
+      }
     }
-  }, [user, userLoading, schedules]);
+  }, [schedules]);
 
   useEffect(() => {
     if (arriveResult?.ok) {
@@ -87,49 +109,6 @@ const Home: NextPage = () => {
     }
   }, [router, departResult]);
 
-  useEffect(() => {
-    (async () => {
-      if (!user) {
-        return;
-      }
-      const { ok, ipAddress: clientIp } = await getData(
-        "/api/getClientIpAddress"
-      );
-      if (ok) {
-        setIpAddress(clientIp);
-      } else {
-        alert("Invalid network access");
-      }
-      const data: { schedules?: schedule[] } = await getData(
-        "/api/schedule/getSchedules/" + user.id
-      );
-      if (data?.schedules) {
-        if (data.schedules.length === 0 || data.schedules[0].finishedAt) {
-          setWorkingStatus({
-            started: 0,
-            isWorking: false,
-            scheduleId: 0,
-          });
-        } else {
-          setWorkingStatus({
-            started: data.schedules[0].startedAt.valueOf(),
-            isWorking: true,
-            scheduleId: data.schedules[0].id,
-          });
-        }
-        setSchedules(
-          data.schedules.map((schedule) => ({
-            ...schedule,
-            startedAt: new Date(schedule.startedAt),
-            finishedAt: schedule.finishedAt
-              ? new Date(schedule.finishedAt)
-              : null,
-          }))
-        );
-      }
-    })();
-  }, [user]);
-
   const {
     hour: workedHour,
     min: workedMin,
@@ -139,7 +118,7 @@ const Home: NextPage = () => {
   return (
     <Layout title="Main">
       <NavBar user={user} />
-      {ipAddress && workingStatus && dataLoaded && user ? (
+      {ipAddress && workingStatus && user ? (
         <>
           <div className="h-1/3 w-full flex items-end justify-center">
             <div className="text-2xl md:text-6xl font-semibold">
@@ -217,5 +196,15 @@ const Home: NextPage = () => {
     </Layout>
   );
 };
+
+export const getServerSideProps = withSsrSession(async function ({
+  req,
+}: NextPageContext) {
+  return {
+    props: {
+      userId: req?.session.user?.id,
+    },
+  };
+});
 
 export default Home;
