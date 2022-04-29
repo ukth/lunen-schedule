@@ -15,7 +15,10 @@ import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const Home: NextPage<{ userId: number }> = ({ userId }) => {
+const Home: NextPage<{ userId: number; ipAddress: string }> = ({
+  userId,
+  ipAddress,
+}) => {
   const router = useRouter();
   const { user, loading: userLoading } = useUser();
 
@@ -36,27 +39,6 @@ const Home: NextPage<{ userId: number }> = ({ userId }) => {
   const [displayTime, setDisplaytime] = useState(new Date());
 
   const [timeWorked, setTimeWorked] = useState(0);
-
-  const [ipAddress, setIpAddress] = useState<string>();
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      setIpAddress("221.149.114.252");
-      return;
-    }
-    (async () => {
-      const { ok, ipAddress: clientIp } = await getData(
-        "/api/getClientIpAddress"
-      );
-      if (ok) {
-        setIpAddress(clientIp);
-      } else {
-        alert("Invalid network access");
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -118,7 +100,7 @@ const Home: NextPage<{ userId: number }> = ({ userId }) => {
   return (
     <Layout title="Main">
       <NavBar user={user} />
-      {ipAddress && workingStatus && user ? (
+      {workingStatus && user ? (
         <>
           <div className="h-1/3 w-full flex items-end justify-center">
             <div className="text-2xl md:text-6xl font-semibold">
@@ -133,7 +115,8 @@ const Home: NextPage<{ userId: number }> = ({ userId }) => {
             </div>
           </div>
           <div className="h-1/6 w-full flex items-end justify-center mb-10">
-            {OFFICE_IP_ADDRESSES.includes(ipAddress) ? (
+            {process.env.NODE_ENV === "development" ||
+            OFFICE_IP_ADDRESSES.includes(ipAddress) ? (
               !workingStatus?.isWorking ? (
                 <Button
                   onClick={async () => {
@@ -200,14 +183,10 @@ const Home: NextPage<{ userId: number }> = ({ userId }) => {
 export const getServerSideProps = withSsrSession(async function ({
   req,
 }: NextPageContext) {
-  console.log(
-    "headers:",
-    req?.headers["x-real-ip"],
-    req?.headers["x-forwarded-for"]
-  );
   return {
     props: {
       userId: req?.session.user?.id,
+      ipAddress: req?.headers["x-real-ip"] || req?.headers["x-forwarded-for"],
     },
   };
 });
