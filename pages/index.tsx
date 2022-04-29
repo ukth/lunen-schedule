@@ -200,6 +200,11 @@ const Home: NextPage<{ userId: number }> = ({ userId }) => {
 export const getServerSideProps = withSsrSession(async function ({
   req,
 }: NextPageContext) {
+  console.log(
+    "headers:",
+    req?.headers["x-real-ip"],
+    req?.headers["x-forwarded-for"]
+  );
   return {
     props: {
       userId: req?.session.user?.id,
