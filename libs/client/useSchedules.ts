@@ -9,9 +9,7 @@ export interface SchedulesResponse {
 
 export default function useSchedules({ id }: { id: number | undefined }) {
   const { data, error } = useSWR<SchedulesResponse>(
-    !id || typeof window === "undefined"
-      ? null
-      : "/api/schedule/getSchedules/" + id
+    !id ? null : "/api/schedule/getSchedules/" + id
   );
 
   const [schedules, setSchedules] = useState<schedule[]>();

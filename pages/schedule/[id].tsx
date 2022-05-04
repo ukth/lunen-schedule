@@ -19,9 +19,7 @@ const SchedulePage: NextPage = () => {
   const { user } = useUser();
 
   const { data: userData, error } = useSWR<UserResponse>(
-    typeof window === "undefined" || !router.query.id
-      ? null
-      : "/api/user/getProfile/" + router.query.id
+    !router.query.id ? null : "/api/user/getProfile/" + router.query.id
   );
 
   useEffect(() => {

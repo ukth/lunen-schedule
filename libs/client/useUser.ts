@@ -9,9 +9,7 @@ export interface UserResponse {
 }
 
 export default function useUser() {
-  const { data, error } = useSWR<UserResponse>(
-    typeof window === "undefined" ? null : "/api/user/getProfile"
-  );
+  const { data, error } = useSWR<UserResponse>("/api/user/getProfile");
 
   return { user: data?.user, loading: !data && !error };
 }
