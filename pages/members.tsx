@@ -26,9 +26,7 @@ interface MembersResponse {
 
 const Login: NextPage = () => {
   const router = useRouter();
-  const { data, error } = useSWR<MembersResponse>(
-    typeof window === "undefined" ? null : "/api/user/getMembers"
-  );
+  const { data, error } = useSWR<MembersResponse>("/api/user/getMembers");
 
   const { user, loading: userLoading } = useUser();
 

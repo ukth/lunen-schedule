@@ -33,6 +33,8 @@ model schedule {
   user       User         @relation(fields: [userId], references: [id])
   userId     Int
   modified   Boolean      @default(false)
+
+  @@index([userId])
 }
 
 enum ScheduleType {
