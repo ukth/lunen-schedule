@@ -2,7 +2,7 @@
 
 > lunen-schedule is a work scheduler for Lunen corporation
 
-Website link: https://lunen-schedule.vercel.app/login
+Website link: https://lunen-schedule.vercel.app
 
 ### Project Stack
 
