@@ -24,7 +24,7 @@ async function handler(
       where: {
         userId: +userId,
         startedAt: {
-          gt: new Date(new Date().valueOf() - 30 * 24 * 60 * 60 * 1000),
+          gt: new Date(new Date().valueOf() - 300 * 24 * 60 * 60 * 1000),
         },
       },
       orderBy: [
